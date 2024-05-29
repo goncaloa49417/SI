@@ -23,12 +23,30 @@ SOFTWARE.
 */
 package isel.sisinf.model;
 
+import isel.sisinf.model.interfaces.IElectricBike;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQuery(name="ElectricBike.findByKey",
+        query="SELECT e FROM ElectricBike e WHERE e.bikeId =:key")
+public class ElectricBike implements IElectricBike {
 
-public class ElectricBike {
+    @Override
+    public String toString() {
+        return "ElectricBike = [bikeId=" + bikeId + ", velocity=" + velocity + "autonomy=" + autonomy + "]";
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ElectricBike other = (ElectricBike) obj;
+        return bikeId == other.bikeId;
+    }
 
     public ElectricBike() {}
 
@@ -48,26 +66,32 @@ public class ElectricBike {
 
     private Integer autonomy;
 
+    @Override
     public Bike getBikeId() {
         return bikeId;
     }
 
+    @Override
     public void setBikeId(Bike bikeId) {
         this.bikeId = bikeId;
     }
 
+    @Override
     public Integer getVelocity() {
         return velocity;
     }
 
+    @Override
     public void setVelocity(Integer velocity) {
         this.velocity = velocity;
     }
 
+    @Override
     public Integer getAutonomy() {
         return autonomy;
     }
 
+    @Override
     public void setAutonomy(Integer autonomy) {
         this.autonomy = autonomy;
     }

@@ -28,6 +28,7 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 
+/**
 @Entity
 
 public class StoreTelephone {
@@ -64,3 +65,4 @@ public class StoreTelephone {
         this.telephone = telephone;
     }
 }
+*/

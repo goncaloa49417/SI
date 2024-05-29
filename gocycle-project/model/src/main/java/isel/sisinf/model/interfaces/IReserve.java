@@ -23,7 +23,37 @@ SOFTWARE.
 */
 package isel.sisinf.model.interfaces;
 
+import isel.sisinf.model.Bike;
+import isel.sisinf.model.Client;
+import isel.sisinf.model.Store;
+
+import java.sql.Date;
+
 public interface IReserve {
+    public long getNoReserve();
+    public void setNoReserve(long noReserve);
 
+    public Store getStore();
 
+    public void setStore(Store store);
+
+    public Date getStartDate();
+
+    public void setStartDate(Date startDate);
+
+    public Date getEndDate();
+
+    public void setEndDate(Date endDate);
+
+    public float getValue();
+
+    public void setValue(float value);
+
+    public Client getClient();
+
+    public void setClient(Client client);
+
+    public Bike getBike();
+
+    public void setBike(Bike bike);
 }

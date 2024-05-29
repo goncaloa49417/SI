@@ -23,9 +23,8 @@ SOFTWARE.
 */
 package isel.sisinf.model;
 
+import isel.sisinf.model.interfaces.IStore;
 import jakarta.persistence.*;
-
-@Entity
 /*
 @NamedQuery(name="Student.findByKey",
 			query="SELECT s FROM Student s WHERE s.studentNumber =:key")
@@ -63,16 +62,19 @@ classes={
 })
 
  */
-public class Store {
+@Entity
+@NamedQuery(name="Store.findByKey",
+        query="SELECT s FROM Store s WHERE s.code =:key")
+public class Store implements IStore {
 
     @Id
-    private int storeId;
+    private long code;
 
     public Store() {}
 
-    public Store(int storeId,String email, String address,String location, Person manager)
+    public Store(int code,String email, String address,String location, Client manager)
     {
-        this.storeId = storeId;
+        this.code = code;
         this.email = email;
         this.address = address;
         this.location = location;
@@ -82,7 +84,7 @@ public class Store {
 
     @ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
     @JoinColumn(name="person",referencedColumnName="personId")
-    private Person manager;
+    private Client manager;
 
     private String email;
 
@@ -90,43 +92,52 @@ public class Store {
 
     private String location;
 
-    public int getStoreId() {
-        return storeId;
+    @Override
+    public long getCode() {
+        return code;
     }
 
-    public void setStoreId(int code) {
-        this.storeId = code;
+    @Override
+    public void setCode(long code) {
+        this.code = code;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
 
+    @Override
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @Override
     public String getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(String address) {
         this.address = address;
     }
 
+    @Override
     public String getLocation() {
         return location;
     }
 
+    @Override
     public void setLocation(String location) {
         this.location = location;
     }
-
-    public Person getManager() {
+    @Override
+    public Client getManager() {
         return manager;
     }
 
-    public void setManager(Person manager) {
+    @Override
+    public void setManager(Client manager) {
         this.manager = manager;
     }
 

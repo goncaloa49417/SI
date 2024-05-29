@@ -2,19 +2,20 @@
 package isel.sisinf.model;
 
 
-import java.util.Set;
 import java.util.Objects;
 
 import isel.sisinf.model.interfaces.IBike;
 import jakarta.persistence.*;
 
 @Entity
-@NamedQuery(name="Country.findByKey",
-        query="SELECT c FROM Bike c WHERE c.bikeId =:key")
+@NamedQuery(name="Bike.findByKey",
+        query="SELECT b FROM Bike b WHERE b.bikeId =:key")
 public class Bike implements IBike {
     @Override
     public String toString() {
-        return "Country [countryId=" + bikeId + ", name="+ "]";
+        return "Bike [bikeId=" + bikeId + ", model="+ model + ", brand =" + brand
+                + ", shift=" + shift + ", state=" + state + ", atrDisc=" + atrDisc
+                + "device=" + device.getDeviceNumber() + "]";
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,8 +45,10 @@ public class Bike implements IBike {
     private String brand;
     private Integer shift;
     private String state;
-    private Character atrdisc;
-    private Integer dispositive;
+    private Character atrDisc;
+    @ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
+    @JoinColumn(name="device",referencedColumnName="deviceNumber")
+    private Device device;
     //private Integer spoke;
 
 
@@ -90,25 +93,25 @@ public class Bike implements IBike {
     }
 
     @Override
-    public Character getAtrdisc() {
-        return atrdisc;
+    public Character getAtrDisc() {
+        return atrDisc;
     }
 
     @Override
-    public void setAtrdisc(Character atrdisc) {
-        this.atrdisc = atrdisc;
+    public void setAtrDisc(Character atrDisc) {
+        this.atrDisc = atrDisc;
     }
 
     @Override
-    public Integer getDispositive() {
-        return dispositive;
+    public Device getDevice() {
+        return device;
     }
 
     @Override
-    public void setDispositive(Integer dispositive) {
-        this.dispositive = dispositive;
+    public void setDevice(Device device) {
+        this.device = device;
     }
-
+    /**
     @OneToMany(cascade = CascadeType.ALL,mappedBy="homeCountry",fetch = FetchType.LAZY)
     private Set<Reservation> students;
 
@@ -118,4 +121,5 @@ public class Bike implements IBike {
     public void setStudents(Set<Reservation> students) {
         this.students = students;
     }
+    */
 }

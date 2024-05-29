@@ -26,7 +26,7 @@ package isel.sisinf.model;
 import java.sql.Date;
 
 import jakarta.persistence.*;
-
+/**
 @Entity
 
 public class ClientReservation {
@@ -73,3 +73,4 @@ public class ClientReservation {
 
 
 }
+ */

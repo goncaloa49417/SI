@@ -1,14 +1,16 @@
 package isel.sisinf.model.interfaces;
 
+import isel.sisinf.model.Client;
+
 public interface IStore {
-    public int getCode();
-    public void setCode(int code);
+    public long getCode();
+    public void setCode(long code);
     public String getEmail();
     public void setEmail(String email);
     public String getAddress();
     public void setAddress(String address);
     public String getLocation();
     public void setLocation(String location);
-    public IPerson getManager();
-    public void setManager(IPerson manager);
+    public Client getManager();
+    public void setManager(Client manager);
 }

@@ -27,13 +27,9 @@ import java.sql.Date;
 import java.util.Set;
 
 import jakarta.persistence.*;
-
+/**
 @Entity
-
 public class ClassicBike {
-
-
-
     public ClassicBike() {}
 
     public ClassicBike(Bike bikeId,Integer noShift)
@@ -65,3 +61,4 @@ public class ClassicBike {
     }
 
 }
+ */

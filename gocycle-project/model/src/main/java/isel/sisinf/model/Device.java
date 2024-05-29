@@ -23,22 +23,45 @@ SOFTWARE.
 */
 package isel.sisinf.model;
 
-import java.sql.Date;
-import java.util.Set;
+import java.util.Objects;
 
+import isel.sisinf.model.interfaces.IDevice;
 import jakarta.persistence.*;
 
 @Entity
-public class Device {
+@NamedQuery(name="Device.findByKey",
+        query="SELECT d FROM Device d WHERE d.deviceNumber =:key")
+public class Device implements IDevice {
+    @Override
+    public String toString(){
+        return "Device = [deviceNumber=" + deviceNumber + ", latitude="+ latitude + ", longitude=" + longitude
+                + ", battery=" + battery + "]";
+    }
+
     @Id
-    private int deviceNumber;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long deviceNumber;
+
+    @Override
+    public int hashCode(){return Objects.hash(deviceNumber);}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Device other = (Device) obj;
+        return deviceNumber == other.deviceNumber;
+    }
 
 
     public Device() {}
 
     public Device(int deviceNumber,Integer latitude, Integer longitude, Integer battery)
     {
-        this.deviceNumber= deviceNumber;
+        this.deviceNumber=deviceNumber;
         this.latitude=latitude;
         this.longitude=longitude;
         this.battery=battery;
@@ -49,35 +72,42 @@ public class Device {
     private Integer longitude;
 
     private Integer battery;
-
-    public int getDeviceNumber() {
+    @Override
+    public long getDeviceNumber() {
         return deviceNumber;
     }
 
+    @Override
     public void setDeviceNumber(int deviceNumber) {
         this.deviceNumber = deviceNumber;
     }
 
+    @Override
     public Integer getLatitude() {
         return latitude;
     }
 
+    @Override
     public void setLatitude(Integer latitude) {
         this.latitude = latitude;
     }
 
+    @Override
     public Integer getLongitude() {
         return longitude;
     }
 
+    @Override
     public void setLongitude(Integer longitude) {
         this.longitude = longitude;
     }
 
+    @Override
     public Integer getBattery() {
         return battery;
     }
 
+    @Override
     public void setBattery(Integer battery) {
         this.battery = battery;
     }

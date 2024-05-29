@@ -25,9 +25,9 @@ package isel.sisinf.model;
 
 import java.sql.Date;
 
+import isel.sisinf.model.interfaces.IReserve;
 import jakarta.persistence.*;
 
-@Entity
 /*
 @NamedQuery(name="Student.findByKey",
 			query="SELECT s FROM Student s WHERE s.studentNumber =:key")
@@ -65,19 +65,22 @@ classes={
 })
 
  */
-public class Reservation {
+
+@Entity
+@NamedQuery(name="Reserve.findByKey",
+		query="SELECT r FROM Reserve r WHERE r.noReserve =:key")
+public class Reserve implements IReserve {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int reserveNumber;
+	private long noReserve;
 
-	
-	public Reservation() {}
+	public Reserve() {}
 
-	public Reservation(int reserveNumber, Store store, Date initialDate, Date endDate, Integer value, Bike bike)
+	public Reserve(int noReserve, Store store, Date initialDate, Date endDate, Integer value, Bike bike)
 	{
-		this.reserveNumber = reserveNumber;
+		this.noReserve = noReserve;
 		this.store = store;
-		this.initialDate = new java.sql.Date(initialDate.getTime());
+		this.startDate = new java.sql.Date(initialDate.getTime());
 		this.endDate = new java.sql.Date(endDate.getTime());
 		this.value = value;
 		this.bike = bike;
@@ -89,54 +92,80 @@ public class Reservation {
 	@JoinColumn(name="bike",referencedColumnName="bikeId")
 	private Bike bike;
 
+	@Id
 	@ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
 	@JoinColumn(name="store",referencedColumnName="storeId")
 	private Store store;
-	
-	/*
-	@ManyToMany
-    @JoinTable(name="StudentCourse",
-          joinColumns=@JoinColumn(name="studentId"),
-          inverseJoinColumns=@JoinColumn(name="courseId"))
-	private Set<Course> courses;
 
-	 */
-
-	private Date initialDate;
+	private Date startDate;
 
 	private Date endDate;
 
-	private Integer value;
+	private float value;
 
+	@ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
+	@JoinColumn(name="client",referencedColumnName="clientId")
+	private Client client;
 
-
-	public Date getInitialDate() {
-		return initialDate;
+	@Override
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setInitialDate(Date initialDate) {
-		this.initialDate = initialDate;
+	@Override
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
+	@Override
 	public Date getEndDate() {
 		return endDate;
 	}
-	public void setDateBirth(Date endDate) {
+	@Override
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
-		public Store getStore() {
+	@Override
+	public long getNoReserve() {
+		return noReserve;
+	}
+
+	@Override
+	public void setNoReserve(long noReserve) {
+		this.noReserve = noReserve;
+	}
+
+	@Override
+	public Store getStore() {
 		return store;
 	}
+	@Override
 	public void setStore(Store store) {
 		this.store = store;
 	}
 
-	public Integer getValue() {
+	@Override
+	public float getValue() {
 		return value;
 	}
-	public void setValue(Integer value) {
+	@Override
+	public void setValue(float value) {
 		this.value = value;
 	}
+
+	@Override
+	public Client getClient(){
+		return client;
+	}
+
+	@Override
+	public void setClient(Client client){this.client = client;}
+
+	@Override
+	public Bike getBike(){return this.bike;}
+
+	@Override
+	public void setBike(Bike bike){this.bike = bike;}
 	
 }

@@ -1,7 +1,7 @@
 package isel.sisinf.model.interfaces;
 
 public interface IDevice {
-    public int getDeviceNumber();
+    public long getDeviceNumber();
     public void setDeviceNumber(int deviceNumber);
     public Integer getLatitude();
     public void setLatitude(Integer latitude);

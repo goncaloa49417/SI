@@ -23,15 +23,12 @@ SOFTWARE.
 */
 package isel.sisinf.model.interfaces;
 
+import isel.sisinf.model.Device;
+
 public interface IBike
 {
 	public long getBikeId();
-	public void setBikeId(long countryId) ;
-/*
-	public Integer getSpoke() ;
-	public void setSpoke(Integer spoke);
-
- */
+	public void setBikeId(long bikeId) ;
 	
 	public String getModel() ;
 	public void setModel(String model);
@@ -45,10 +42,10 @@ public interface IBike
 	public String getState() ;
 	public void setState(String state);
 
-	public Character getAtrdisc () ;
-	public void setAtrdisc(Character atrdisc);
+	public Character getAtrDisc () ;
+	public void setAtrDisc(Character atrDisc);
 
-	public Integer getDispositive() ;
-	public void setDispositive(Integer dispositive);
+	public Device getDevice() ;
+	public void setDevice(Device device);
 
 }

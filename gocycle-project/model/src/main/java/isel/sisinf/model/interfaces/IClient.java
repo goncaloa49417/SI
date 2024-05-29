@@ -23,15 +23,15 @@ SOFTWARE.
 */
 package isel.sisinf.model.interfaces;
 
-public interface IPerson {
+public interface IClient {
 
-	public long getPersonId();
+	public long getClientId();
 
-	public void setPersonId(long courseId);
+	public void setClientId(long clientId);
 
-	public String getPersonName();
+	public String getClientName();
 
-	public void setPersonName(String name);
+	public void setClientName(String name);
 
 	public String getAddress();
 
@@ -45,9 +45,13 @@ public interface IPerson {
 
 	public void setPhone(String phone) ;
 
-	public Character getNoIdent() ;
+	public String getNoIdent() ;
 
-	public void setNoIdent(Character noIdent) ;
+	public void setNoIdent(String noIdent) ;
+
+	public String getNationality();
+
+	public void SetNationality(String nationality);
 
 	public Character getAtrDisc() ;
 
