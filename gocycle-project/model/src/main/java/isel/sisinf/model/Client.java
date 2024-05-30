@@ -27,6 +27,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name="Client.getAll", query = "select c from Client c")
 @NamedQuery(name="Client.findByKey",
 query="SELECT c FROM Client c WHERE c.clientId =:key")
 public class Client implements IClient {

@@ -1,6 +1,7 @@
 package isel.sisinf.ui;
 
 import isel.sisinf.jpa.IBikeRepository;
+import isel.sisinf.jpa.IClientRepository;
 import isel.sisinf.jpa.IContext;
 import isel.sisinf.jpa.IReservationRepository;
 
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 
 import isel.sisinf.model.Bike;
+import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
@@ -64,6 +66,8 @@ public class JPAContext implements IContext{
     private int _txcount;
     private IReservationRepository _reservationRepository;
     private IBikeRepository _bikeRepository;
+
+    private IClientRepository _clientRepository;
 
     /// HELPER METHODS
     protected List helperQueryImpl(String jpql, Object... params)
@@ -171,6 +175,58 @@ public class JPAContext implements IContext{
         }
     }
 
+    protected class ClientRepository implements IClientRepository {
+/*
+        @Override
+        public Reservation findByKey(Long key) {
+            return null;
+        }
+
+ */
+/*
+        @Override
+        public Collection<Reservation> find(String jpql, Object... params) {
+            return helperQueryImpl(jpql, params);
+        }
+
+ */
+
+        @Override
+        public Client findByKey(Long key) {
+            return null;
+        }
+
+        @Override
+        public Collection<Client> find(String jpql, Object... params) {
+            return List.of();
+        }
+
+        @Override
+        public Client create(Client client) {
+            return (Client) helperCreateImpl(client);
+        }
+
+        @Override
+        public Client update(Client client) {
+            return (Client) helperUpdateImpl(client);
+        }
+
+        @Override
+        public Client delete(Client client) {
+            return (Client) helperDeleteImpl(client);
+        }
+
+
+
+        @Override
+        public Collection<Client> getAllClients() {
+            Query query = _em.createNamedQuery("Client.getAll");
+            List resultList = query.getResultList();
+            System.out.println(resultList);
+            return resultList;
+        }
+    }
+
 
     @Override
     public void beginTransaction() {
@@ -259,6 +315,21 @@ public class JPAContext implements IContext{
 
 
 
+    @Override
+    public Client createClient(Client newClient) {
+        return _clientRepository.create(newClient);
+    }
+
+    @Override
+    public Collection<Client> getAllClients() {
+        return _clientRepository.getAllClients();
+    }
+
+    @Override
+    public Client getClient(Long clientId) {
+        return _clientRepository.findByKey(clientId);
+    }
+
     public JPAContext() {
         this("dal-lab");
     }
@@ -270,6 +341,7 @@ public class JPAContext implements IContext{
         this._emf = Persistence.createEntityManagerFactory(persistentCtx);
         this._em = _emf.createEntityManager();
         this._reservationRepository = new ReservationRepository();
+        this._clientRepository = new ClientRepository();
         this._bikeRepository = new BikeRepository();
     }
 

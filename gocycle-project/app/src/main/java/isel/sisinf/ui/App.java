@@ -23,6 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.model.Client;
 import isel.sisinf.model.Bike;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
@@ -150,14 +151,45 @@ class UI
 
     private void createCostumer() {
         // TODO
-        System.out.println("createCostumer()");
+        JPAContext ctx = new JPAContext();
+        ctx.beginTransaction();
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter the name of the client:");
+        String name = s.nextLine();
+        System.out.println("Enter the address of the client:");
+        String address = s.nextLine();
+        System.out.println("Enter the email of the client:");
+        String email = s.nextLine();
+        System.out.println("Enter the phone number of the client:");
+        String phone = s.nextLine();
+        System.out.println("Enter the identification number of the client:");
+        String noIdent = s.nextLine();
+        System.out.println("Enter the nationality of the client:");
+        String nationality = s.nextLine();
+        System.out.println("Enter the discount attribute of the client:");
+        //Character atrDisc = s.next().charAt(0);
+        Character atrDisc = s.nextLine().charAt(0);
+        Client newClient = new Client();
+        newClient.setClientName(name);
+        newClient.setAddress(address);
+        newClient.setEmail(email);
+        newClient.setPhone(phone);
+        newClient.setNoIdent(noIdent);
+        newClient.SetNationality(nationality);
+        newClient.setAtrDisc(atrDisc);
+        //Client newClient = new Client();
+        //newClient.setClientName(name);
+        System.out.println(ctx.createClient(newClient));
+        //ctx.createClient(newClient);
+
+
     }
   
     private void listExistingBikes()
     {
         System.out.println("listExistingBikes()");
         JPAContext ctx = new JPAContext();
-        ctx.getAllFreeBikes();
+        ctx.getAllBikes();
     }
 
     private void checkBikeAvailability()
