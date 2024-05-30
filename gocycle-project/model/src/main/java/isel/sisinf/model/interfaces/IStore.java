@@ -9,8 +9,6 @@ public interface IStore {
     public void setEmail(String email);
     public String getAddress();
     public void setAddress(String address);
-    public String getLocation();
-    public void setLocation(String location);
     public Client getManager();
     public void setManager(Client manager);
 }

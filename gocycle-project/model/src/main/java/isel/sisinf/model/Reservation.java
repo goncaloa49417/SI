@@ -24,6 +24,7 @@ SOFTWARE.
 package isel.sisinf.model;
 
 import java.sql.Date;
+import java.util.Collection;
 
 import isel.sisinf.model.interfaces.IReservation;
 import jakarta.persistence.*;
@@ -67,13 +68,13 @@ classes={
  */
 
 @Entity
+@NamedQuery(name="Reservation.getAll", query = "select r from Reservation r")
 @NamedQuery(name="Reservation.findByKey",
 		query="SELECT r FROM Reservation r WHERE r.noReservation =:key")
 public class Reservation implements IReservation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long noReservation;
-
 	public Reservation() {}
 
 	public Reservation(int noReservation, Store store, Date initialDate, Date endDate, Integer value, Bike bike)
@@ -94,7 +95,7 @@ public class Reservation implements IReservation {
 
 	@Id
 	@ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
-	@JoinColumn(name="store",referencedColumnName="storeId")
+	@JoinColumn(name="store",referencedColumnName="code")
 	private Store store;
 
 	private Date startDate;
@@ -165,5 +166,4 @@ public class Reservation implements IReservation {
 
 	@Override
 	public void setBike(Bike bike){this.bike = bike;}
-	
 }

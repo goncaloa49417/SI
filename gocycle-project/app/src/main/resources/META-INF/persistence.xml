@@ -4,6 +4,13 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
     <persistence-unit name="dal-lab" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>isel.sisinf.model.Reservation</class>
+        <class>isel.sisinf.model.Bike</class>
+        <class>isel.sisinf.model.ElectricBike</class>
+        <class>isel.sisinf.model.Device</class>
+        <class>isel.sisinf.model.Core</class>
+        <class>isel.sisinf.model.Client</class>
+        <class>isel.sisinf.model.Store</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>

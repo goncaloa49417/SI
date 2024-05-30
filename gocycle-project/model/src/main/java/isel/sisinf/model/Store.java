@@ -72,25 +72,22 @@ public class Store implements IStore {
 
     public Store() {}
 
-    public Store(int code,String email, String address,String location, Client manager)
+    public Store(int code,String email, String address, Client manager)
     {
         this.code = code;
         this.email = email;
         this.address = address;
-        this.location = location;
         this.manager = manager;
         //shop.getReserves().add(this);
     }
 
     @ManyToOne(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
-    @JoinColumn(name="person",referencedColumnName="personId")
+    @JoinColumn(name="manager",referencedColumnName="clientId")
     private Client manager;
 
     private String email;
 
     private String address;
-
-    private String location;
 
     @Override
     public long getCode() {
@@ -122,15 +119,6 @@ public class Store implements IStore {
         this.address = address;
     }
 
-    @Override
-    public String getLocation() {
-        return location;
-    }
-
-    @Override
-    public void setLocation(String location) {
-        this.location = location;
-    }
     @Override
     public Client getManager() {
         return manager;

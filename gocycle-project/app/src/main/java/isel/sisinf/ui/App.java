@@ -23,6 +23,9 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.model.Reservation;
+
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.HashMap;
 
@@ -162,7 +165,11 @@ class UI
     }
 
     private void obtainBookings() {
-        // TODO
+        ReservationRepository r = new ReservationRepository();
+        Collection<Reservation> all = r.getAll();
+        for(Reservation res: all){
+            System.out.println(res.toString());
+        }
         System.out.println("obtainBookings()");
     }
 
