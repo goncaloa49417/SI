@@ -1,3 +1,9 @@
+drop table if exists public.Client CASCADE;
+drop table if exists public.Store CASCADE;
+drop table if exists public.Device CASCADE;
+drop table if exists public.Reservation CASCADE;
+drop table if exists public.ElectricBike CASCADE;
+
 create table Client(
                        clientId serial primary key,
                        name varchar(20) not null,
@@ -49,14 +55,14 @@ create table electricBike(
 );
 
 create table reservation(
-                        noReservation serial not null,
-                        store int not null references store(code),
-                        primary key(noReservation, store),
-                        startDate timestamp not null,
-                        endDate timestamp,
-                        bike int not null references bike(bikeId),
-                        client int not null references Client(clientId),
-                        value numeric(4,2)
+                            noReservation serial not null,
+                            store int not null references store(code),
+                            primary key(noReservation, store),
+                            startDate timestamp not null,
+                            endDate timestamp,
+                            bike int not null references bike(bikeId),
+                            client int not null references Client(clientId),
+                            value numeric(4,2)
 );
 
 
