@@ -29,9 +29,9 @@ import isel.sisinf.model.Store;
 
 import java.sql.Date;
 
-public interface IReserve {
-    public long getNoReserve();
-    public void setNoReserve(long noReserve);
+public interface IReservation {
+    public long getNoReservation();
+    public void setNoReservation(long noReserve);
 
     public Store getStore();
 

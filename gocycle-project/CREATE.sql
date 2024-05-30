@@ -48,10 +48,10 @@ create table electricBike(
                              velocity int not null
 );
 
-create table reserve(
-                        noReserve serial not null,
+create table reservation(
+                        noReservation serial not null,
                         store int not null references store(code),
-                        primary key(noReserve, store),
+                        primary key(noReservation, store),
                         startDate timestamp not null,
                         endDate timestamp,
                         bike int not null references bike(bikeId),
@@ -81,5 +81,5 @@ insert into bike(weight, model, brand, state, atrdisc, shift, device) values(45.
 insert into electricBike values (2, 500, 33);
 insert into electricBike values (4, 450, 30);
 
-insert into reserve (store, startDate, endDate, value,bike, client) values (1, now(), null, null,2 ,1);
-insert into reserve (store, startDate, endDate, value,bike, client) values(1, now(), null, null,3,3);
+insert into reservation (store, startDate, endDate, value,bike, client) values (1, now(), null, null,2 ,1);
+insert into reservation (store, startDate, endDate, value,bike, client) values(1, now(), null, null,3,3);
