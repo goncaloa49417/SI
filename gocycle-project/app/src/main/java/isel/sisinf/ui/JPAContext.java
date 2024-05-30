@@ -89,7 +89,7 @@ public class JPAContext implements IContext{
         return entity;
     }
 
-    protected Object helperDeleteteImpl(Object entity)
+    protected Object helperDeleteImpl(Object entity)
     {
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations.
         _em.remove(entity);
@@ -97,7 +97,40 @@ public class JPAContext implements IContext{
         return entity;
     }
 
+    protected class ReservationRepository implements IReservationRepository{
 
+        @Override
+        public Reservation findByKey(Long key) {
+            return null;
+        }
+
+        @Override
+        public Collection<Reservation> find(String jpql, Object... params) {
+            return helperQueryImpl(jpql, params);
+        }
+
+        @Override
+        public Reservation create(Reservation reservation) {
+            return (Reservation) helperCreateImpl(reservation);
+        }
+
+        @Override
+        public Reservation update(Reservation reservation) {
+            return (Reservation) helperUpdateImpl(reservation);
+        }
+
+        @Override
+        public Reservation delete(Reservation reservation) {
+            return (Reservation) helperDeleteImpl(reservation);
+        }
+
+        @Override
+        public Collection<Reservation> getAll() {
+            Query query = _em.createNamedQuery("Reservation.getAll");
+            List resultList = query.getResultList();
+            return resultList;
+        }
+    }
 
 
     @Override
@@ -163,6 +196,11 @@ public class JPAContext implements IContext{
     @Override
     public Collection<Reservation> getAllReservations() {
         return _reservationRepository.getAll();
+    }
+
+    @Override
+    public Reservation createReservation(Reservation reservation){
+        return _reservationRepository.create(reservation);
     }
 
     public JPAContext() {

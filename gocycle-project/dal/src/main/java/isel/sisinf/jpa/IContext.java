@@ -38,6 +38,8 @@ public interface IContext extends AutoCloseable {
 	 void clear();
 	 void persist(Object entity);
 
+
+	 Reservation createReservation(Reservation reservation);
 	 Collection<Reservation> getAllReservations();
 	 /**
 	 ICountryRepository getCountries();//TODO
