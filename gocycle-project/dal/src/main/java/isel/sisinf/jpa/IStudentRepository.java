@@ -26,6 +26,7 @@ package isel.sisinf.jpa;
 import java.util.Collection;
 import java.util.List;
 
+/**
 import isel.sisinf.dal.lab.Course;
 import isel.sisinf.dal.lab.Student;
 
@@ -35,3 +36,4 @@ public interface IStudentRepository extends IRepository<Student, Collection<Stud
 	Collection<Student> fromCountry(Integer id);
 	Collection<Student> getEnrolledCourses(Integer id);
 }
+*/

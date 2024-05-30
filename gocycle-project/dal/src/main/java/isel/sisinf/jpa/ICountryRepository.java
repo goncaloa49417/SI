@@ -22,12 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 package isel.sisinf.jpa;
+import isel.sisinf.model.Bike;
+/**
 import isel.sisinf.model.Country;
 
 import java.util.Collection;
 
 
-public interface ICountryRepository extends IRepository<Country, Collection<Country>, Long> , ICountryDataMapper
+public interface ICountryRepository extends IRepository<Bike, Collection<Bike>, Long> , ICountryDataMapper
 {
 
 }
+*/

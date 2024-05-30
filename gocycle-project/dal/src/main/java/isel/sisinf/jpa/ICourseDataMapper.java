@@ -23,7 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
-
+/**
 import isel.sisinf.model.Course;
 
 import java.sql.Connection;
@@ -36,4 +36,4 @@ public interface ICourseDataMapper  extends IDataMapper<Course>{
 
 
 }
-
+*/

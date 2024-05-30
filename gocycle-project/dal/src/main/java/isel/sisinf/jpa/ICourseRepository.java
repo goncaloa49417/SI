@@ -28,9 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-
-import isel.sisinf.dal.lab.Course;
-
+/**
 public interface ICourseRepository extends IRepository<Course, Collection<Course>, Long>, ICourseDataMapper
 {
     public Course findByKey(Long key);
@@ -40,4 +38,4 @@ public interface ICourseRepository extends IRepository<Course, Collection<Course
     public Course delete(Course course);
 
 
-}
+}*/
