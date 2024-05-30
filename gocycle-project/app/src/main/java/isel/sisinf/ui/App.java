@@ -23,6 +23,8 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.model.Bike;
+import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
 
 import java.util.Collection;
@@ -153,8 +155,9 @@ class UI
   
     private void listExistingBikes()
     {
-        // TODO
         System.out.println("listExistingBikes()");
+        JPAContext ctx = new JPAContext();
+        ctx.getAllFreeBikes();
     }
 
     private void checkBikeAvailability()
@@ -176,7 +179,19 @@ class UI
 
     private void makeBooking()
     {
+        JPAContext ctx = new JPAContext();
+        ctx.beginTransaction();
+        Reservation r = new Reservation();
+        Long CustomerId = getCustomer(ctx);
+        Client c = ctx.getClient(CustomerId);
+        r.setClient(c);
+
+        Long BikeId = getFreeBike(ctx);
+        Bike b = ctx.getBike(BikeId);
+        r.setBike(b);
+
         // TODO
+        ctx.createReservation(r);
         System.out.println("makeBooking()");
         
     }
@@ -193,6 +208,23 @@ class UI
         System.out.println("DAL version:"+ isel.sisinf.jpa.Dal.version());
         System.out.println("Core version:"+ isel.sisinf.model.Core.version());
         
+    }
+
+    private Long getCustomer(JPAContext ctx){
+        System.out.println("Choose a Customer ID for the Booking");
+        ctx.getAllClients();
+        Scanner s = new Scanner(System.in);
+        return s.nextLong();
+    }
+
+    private Long getFreeBike(JPAContext ctx){
+        System.out.println("Choose a Bike ID for the Booking");
+        Collection<Bike> allFreeBikes = ctx.getAllFreeBikes();
+        for(Bike b: allFreeBikes){
+            System.out.println(b.toString());
+        }
+        Scanner s = new Scanner(System.in);
+        return s.nextLong();
     }
 }
 

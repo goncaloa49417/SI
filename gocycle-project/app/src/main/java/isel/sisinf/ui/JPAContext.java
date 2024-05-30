@@ -1,5 +1,6 @@
 package isel.sisinf.ui;
 
+import isel.sisinf.jpa.IBikeRepository;
 import isel.sisinf.jpa.IContext;
 import isel.sisinf.jpa.IReservationRepository;
 
@@ -30,6 +31,7 @@ SOFTWARE.
 import java.util.Collection;
 import java.util.List;
 
+import isel.sisinf.model.Bike;
 import isel.sisinf.model.Reservation;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
@@ -61,6 +63,7 @@ public class JPAContext implements IContext{
     //b) What is the purpose of _txCount?
     private int _txcount;
     private IReservationRepository _reservationRepository;
+    private IBikeRepository _bikeRepository;
 
     /// HELPER METHODS
     protected List helperQueryImpl(String jpql, Object... params)
@@ -96,12 +99,48 @@ public class JPAContext implements IContext{
         commit();
         return entity;
     }
+    protected class BikeRepository implements IBikeRepository{
 
+        @Override
+        public Bike findByKey(Long key) {
+            return _em.createNamedQuery("Bike.findByKey", Bike.class).setParameter("key", key).getSingleResult();
+        }
+
+        @Override
+        public Collection<Bike> find(String jpql, Object... params) {
+            return helperQueryImpl(jpql, params);
+        }
+
+        @Override
+        public Bike create(Bike bike) {
+            return (Bike) helperCreateImpl(bike);
+        }
+
+        @Override
+        public Bike update(Bike bike) {
+            return (Bike) helperUpdateImpl(bike);
+        }
+
+        @Override
+        public Bike delete(Bike bike) {
+            return (Bike) helperDeleteImpl(bike);
+        }
+
+        @Override
+        public Collection<Bike> getAll(){
+            return _em.createNamedQuery("Bike.getAll").getResultList();
+        }
+
+        @Override
+        public Collection<Bike> getAllFreeBikes(){
+            return _em.createNamedQuery("Bike.getAllFreeBikes").getResultList();
+        }
+    }
     protected class ReservationRepository implements IReservationRepository{
 
         @Override
         public Reservation findByKey(Long key) {
-            return null;
+            return _em.createNamedQuery("Reservation.findByKey", Reservation.class).setParameter("key", key).getSingleResult();
         }
 
         @Override
@@ -203,6 +242,23 @@ public class JPAContext implements IContext{
         return _reservationRepository.create(reservation);
     }
 
+    @Override
+    public Collection<Bike> getAllFreeBikes(){
+        return _bikeRepository.getAllFreeBikes();
+    }
+
+    @Override
+    public Collection<Bike> getAllBikes(){
+        return _bikeRepository.getAll();
+    }
+
+    @Override
+    public Bike getBike(Long bikeId){
+        return _bikeRepository.findByKey(bikeId);
+    }
+
+
+
     public JPAContext() {
         this("dal-lab");
     }
@@ -214,6 +270,7 @@ public class JPAContext implements IContext{
         this._emf = Persistence.createEntityManagerFactory(persistentCtx);
         this._em = _emf.createEntityManager();
         this._reservationRepository = new ReservationRepository();
+        this._bikeRepository = new BikeRepository();
     }
 
 

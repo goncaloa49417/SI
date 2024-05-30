@@ -10,5 +10,9 @@ public interface IBikeRepository extends IRepository<Bike, Collection<Bike>, Lon
     public Collection<Bike> find(String jpql, Object... params);
     public Bike create(Bike bike);
     public Bike update(Bike bike);
-    public Bike delete(Bike course);
+    public Bike delete(Bike bike);
+
+    public Collection<Bike> getAllFreeBikes();
+
+    public Collection<Bike> getAll();
 }

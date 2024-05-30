@@ -8,6 +8,8 @@ import isel.sisinf.model.interfaces.IBike;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQuery(name = "Bike.getAll", query = "select b from Bike b")
+@NamedQuery(name="Bike.getAllFreeBikes", query = "select b from Bike b where b.state = 'free'")
 @NamedQuery(name="Bike.findByKey",
         query="SELECT b FROM Bike b WHERE b.bikeId =:key")
 public class Bike implements IBike {

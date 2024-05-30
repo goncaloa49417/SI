@@ -23,6 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
+import isel.sisinf.model.Bike;
 import isel.sisinf.model.Reservation;
 
 import java.util.Collection;
@@ -41,6 +42,11 @@ public interface IContext extends AutoCloseable {
 
 	 Reservation createReservation(Reservation reservation);
 	 Collection<Reservation> getAllReservations();
+
+	 Collection<Bike> getAllFreeBikes();
+
+	 Bike getBike(Long bikeId);
+	 Collection<Bike> getAllBikes();
 	 /**
 	 ICountryRepository getCountries();//TODO
 	 IStudentRepository getStudents();
