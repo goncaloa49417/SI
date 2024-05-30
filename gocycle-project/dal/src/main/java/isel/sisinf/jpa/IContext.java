@@ -23,6 +23,10 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
+import isel.sisinf.model.Reservation;
+
+import java.util.Collection;
+
 // a) Why IContext needs to implement AutoCloseable
 public interface IContext extends AutoCloseable {
 
@@ -33,6 +37,8 @@ public interface IContext extends AutoCloseable {
 	 void flush();
 	 void clear();
 	 void persist(Object entity);
+
+	 Collection<Reservation> getAllReservations();
 	 /**
 	 ICountryRepository getCountries();//TODO
 	 IStudentRepository getStudents();

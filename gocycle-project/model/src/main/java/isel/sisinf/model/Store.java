@@ -66,7 +66,9 @@ classes={
 @NamedQuery(name="Store.findByKey",
         query="SELECT s FROM Store s WHERE s.code =:key")
 public class Store implements IStore {
-
+    @Override
+    public String toString(){return "Store = [code=" + code + ", email=" + email + ", address=" + address +
+            ", manager=" + manager.getClientName();}
     @Id
     private long code;
 

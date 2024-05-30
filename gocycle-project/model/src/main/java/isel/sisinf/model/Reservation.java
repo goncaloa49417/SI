@@ -72,6 +72,10 @@ classes={
 @NamedQuery(name="Reservation.findByKey",
 		query="SELECT r FROM Reservation r WHERE r.noReservation =:key")
 public class Reservation implements IReservation {
+
+	@Override
+	public String toString(){return "Reservation = [noReservation=" + noReservation + ", store="+ store.getCode() +
+			", startDate=" + startDate + ", endDate=" + endDate + ", value=" + value + ", bike=" + bike.getBikeId() + "]";}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long noReservation;

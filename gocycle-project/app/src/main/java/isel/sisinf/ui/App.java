@@ -165,8 +165,9 @@ class UI
     }
 
     private void obtainBookings() {
-        ReservationRepository r = new ReservationRepository();
-        Collection<Reservation> all = r.getAll();
+        JPAContext ctx = new JPAContext();
+        ctx.beginTransaction();
+        Collection<Reservation> all = ctx.getAllReservations();
         for(Reservation res: all){
             System.out.println(res.toString());
         }

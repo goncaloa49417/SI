@@ -9,4 +9,6 @@ public interface IReservationRepository extends IRepository<Reservation, Collect
     public Reservation create(Reservation reservation);
     public Reservation update(Reservation reservation);
     public Reservation delete(Reservation reservation);
+
+    public Collection<Reservation> getAll();
 }
