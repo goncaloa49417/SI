@@ -17,7 +17,7 @@ public class Bike implements IBike {
     public String toString() {
         return "Bike [bikeId=" + bikeId + ", model="+ model + ", brand =" + brand
                 + ", shift=" + shift + ", state=" + state + ", atrDisc=" + atrDisc
-                + "device=" + device.getDeviceNumber() + "]";
+                + ", device=" + device.getDeviceNumber() + "]";
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

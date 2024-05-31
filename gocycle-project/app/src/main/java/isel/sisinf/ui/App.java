@@ -189,12 +189,16 @@ class UI
     {
         System.out.println("listExistingBikes()");
         JPAContext ctx = new JPAContext();
-        ctx.getAllBikes();
+        Collection<Bike> allBikes = ctx.getAllBikes();
+        for(Bike b: allBikes){
+            System.out.println(b.toString());
+        }
     }
 
     private void checkBikeAvailability()
     {
-        // TODO
+        JPAContext ctx = new JPAContext();
+        Long bikeId = getBike(ctx);
         System.out.println("checkBikeAvailability()");
 
     }
@@ -222,10 +226,10 @@ class UI
         Bike b = ctx.getBike(BikeId);
         r.setBike(b);
 
-        // TODO
         ctx.createReservation(r);
         System.out.println("makeBooking()");
-        
+
+
     }
 
     private void cancelBooking()
@@ -253,6 +257,16 @@ class UI
         System.out.println("Choose a Bike ID for the Booking");
         Collection<Bike> allFreeBikes = ctx.getAllFreeBikes();
         for(Bike b: allFreeBikes){
+            System.out.println(b.toString());
+        }
+        Scanner s = new Scanner(System.in);
+        return s.nextLong();
+    }
+
+    private Long getBike(JPAContext context){
+        System.out.println("Choose a Bike ID");
+        Collection<Bike> all = context.getAllBikes();
+        for(Bike b: all){
             System.out.println(b.toString());
         }
         Scanner s = new Scanner(System.in);
