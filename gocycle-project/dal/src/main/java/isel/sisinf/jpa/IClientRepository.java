@@ -11,6 +11,6 @@ public interface IClientRepository extends IRepository<Client, Collection<Client
     public Client update(Client client);
     public Client delete(Client client);
 
-    public Collection<Client> getAllClients();
+    public Collection<Client> getAll();
 
 }

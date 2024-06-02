@@ -68,6 +68,19 @@ classes={
  */
 
 @Entity
+@NamedStoredProcedureQuery(
+		name = "name_makeReservation",
+		procedureName = "makeReservation",
+		parameters = {
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Date.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Date.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
+				@StoredProcedureParameter(mode = ParameterMode.OUT, type = String.class)
+		}
+)
 @NamedQuery(name="Reservation.getAll", query = "select r from Reservation r")
 @NamedQuery(name="Reservation.findByKey",
 		query="SELECT r FROM Reservation r WHERE r.noReservation =:key")

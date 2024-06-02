@@ -153,6 +153,7 @@ class UI
         // TODO
         JPAContext ctx = new JPAContext();
         ctx.beginTransaction();
+        //System.out.println(        ctx.getAllClients());
         Scanner s = new Scanner(System.in);
         System.out.println("Enter the name of the client:");
         String name = s.nextLine();
@@ -177,8 +178,6 @@ class UI
         newClient.setNoIdent(noIdent);
         newClient.SetNationality(nationality);
         newClient.setAtrDisc(atrDisc);
-        //Client newClient = new Client();
-        //newClient.setClientName(name);
         System.out.println(ctx.createClient(newClient));
         //ctx.createClient(newClient);
 
@@ -234,7 +233,7 @@ class UI
 
     private void cancelBooking()
     {
-        // TODO
+
         System.out.println("cancelBooking");
         
     }

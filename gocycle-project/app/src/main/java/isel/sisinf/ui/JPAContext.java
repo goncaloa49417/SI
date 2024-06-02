@@ -83,8 +83,14 @@ public class JPAContext implements IContext{
     protected Object helperCreateImpl(Object entity)
     {
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
+        System.out.println("helperCreateImpl: " + entity.toString());
+
         _em.persist(entity);
-        commit(); //c) Why can we commit a transaction here, if other commands can be sent to the database?
+        _em.flush(); //To assure all changes in memory go into the database
+        System.out.println("helperCreateImpl: " + entity.toString());
+        _tx.commit();
+        //commit(); //c) Why can we commit a transaction here, if other commands can be sent to the database?
+
         return entity;
     }
 
@@ -92,7 +98,8 @@ public class JPAContext implements IContext{
     {
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
         _em.merge(entity); //d) What does merge do?
-        commit();
+        _em.flush(); //To assure all changes in memory go into the database
+        _tx.commit();
         return entity;
     }
 
@@ -100,7 +107,8 @@ public class JPAContext implements IContext{
     {
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations.
         _em.remove(entity);
-        commit();
+        //_em.flush(); //To assure all changes in memory go into the database
+        _tx.commit();
         return entity;
     }
     protected class BikeRepository implements IBikeRepository{
@@ -176,29 +184,20 @@ public class JPAContext implements IContext{
     }
 
     protected class ClientRepository implements IClientRepository {
-/*
-        @Override
-        public Reservation findByKey(Long key) {
-            return null;
+        public Collection<Client> getAll() {
+            Query query = _em.createNamedQuery("Client.getAll");
+            List resultList = query.getResultList();
+            return resultList;
         }
-
- */
-/*
-        @Override
-        public Collection<Reservation> find(String jpql, Object... params) {
-            return helperQueryImpl(jpql, params);
-        }
-
- */
 
         @Override
         public Client findByKey(Long key) {
-            return null;
+            return  _em.createNamedQuery("Client.findByKey", Client.class).setParameter("key", key).getSingleResult();
         }
 
         @Override
         public Collection<Client> find(String jpql, Object... params) {
-            return List.of();
+            return helperQueryImpl(jpql, params);
         }
 
         @Override
@@ -217,14 +216,6 @@ public class JPAContext implements IContext{
         }
 
 
-
-        @Override
-        public Collection<Client> getAllClients() {
-            Query query = _em.createNamedQuery("Client.getAll");
-            List resultList = query.getResultList();
-            System.out.println(resultList);
-            return resultList;
-        }
     }
 
 
@@ -265,6 +256,7 @@ public class JPAContext implements IContext{
         if(_txcount==0 && _tx != null)
         {
             _em.flush(); //To assure all changes in memory go into the database
+            System.out.println("Commiting transaction");
             _tx.commit();
             _tx = null;
         }
@@ -322,12 +314,16 @@ public class JPAContext implements IContext{
 
     @Override
     public Collection<Client> getAllClients() {
-        return _clientRepository.getAllClients();
+        return _clientRepository.getAll();
     }
 
     @Override
     public Client getClient(Long clientId) {
         return _clientRepository.findByKey(clientId);
+    }
+
+    public IClientRepository getClients() {
+        return _clientRepository;
     }
 
     public JPAContext() {
@@ -361,7 +357,7 @@ public class JPAContext implements IContext{
     public java.math.BigDecimal rand_fx(int seed) {
 
         StoredProcedureQuery namedrand_fx =
-                _em.createNamedStoredProcedureQuery("namedrand_fx");
+                _em.createNamedStoredProcedureQuery("name_makeReservation");
         namedrand_fx.setParameter(1, seed);
         namedrand_fx.execute();
 
