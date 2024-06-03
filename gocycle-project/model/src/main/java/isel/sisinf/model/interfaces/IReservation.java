@@ -28,6 +28,7 @@ import isel.sisinf.model.Client;
 import isel.sisinf.model.Store;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public interface IReservation {
     public long getNoReservation();
@@ -37,13 +38,13 @@ public interface IReservation {
 
     public void setStore(Store store);
 
-    public Date getStartDate();
+    public Timestamp getStartDate();
 
-    public void setStartDate(Date startDate);
+    public void setStartDate(Timestamp startDate);
 
-    public Date getEndDate();
+    public Timestamp getEndDate();
 
-    public void setEndDate(Date endDate);
+    public void setEndDate(Timestamp endDate);
 
     public float getValue();
 

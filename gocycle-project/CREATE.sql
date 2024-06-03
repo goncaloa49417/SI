@@ -90,6 +90,52 @@ insert into electricBike values (4, 450, 30);
 insert into reservation (store, startDate, endDate, value,bike, client) values (1, now(), null, null,2 ,1);
 insert into reservation (store, startDate, endDate, value,bike, client) values(1, now(), null, null,3,3);
 
+CREATE OR REPLACE FUNCTION check_reservation_integrity(
+    IN customer_id INTEGER,
+    IN start_date TIMESTAMP,
+    IN bike_id INTEGER,
+    OUT is_doable BOOLEAN
+)
+AS $$
+DECLARE
+    total_bikes INT;
+    reserved_bikes INT;
+BEGIN
+    -- Check if the client has a reservation at this start date
+    IF EXISTS (
+        SELECT 1 FROM reservation r WHERE r.client = customer_id AND r.startDate = start_date
+    ) THEN
+        is_doable := false;
+        RETURN;
+    END IF;
+
+    -- Check if the requested bike is reserved for this time
+    IF EXISTS (
+        SELECT 1 FROM reservation r
+        WHERE r.bike = bike_id
+          AND (
+            (start_date BETWEEN r.startDate AND r.endDate)
+                OR (r.endDate IS NULL AND start_date >= r.startDate)
+            )
+    ) THEN
+        is_doable := false;
+        RETURN;
+    END IF;
+
+    -- Check if there are less than 10% available bikes
+    SELECT COUNT(*) INTO total_bikes FROM bike;
+    SELECT COUNT(*) INTO reserved_bikes FROM reservation r WHERE start_date BETWEEN r.startDate AND r.endDate;
+
+    IF total_bikes - reserved_bikes < (total_bikes * 0.1) THEN
+        is_doable := false;
+    ELSE
+        is_doable := true;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION checkAvailability(bikeId INTEGER, checkTime TIMESTAMP)
     RETURNS Boolean AS $$
     DECLARE
@@ -106,8 +152,9 @@ for r in SELECT *
             RETURN True;
 
         ELSIF RETURN False;
-END IF;
+        END IF;
 end loop;
-raise notice 'HERE';
-Return false --not sure if prevously return true before leave gets here and return false
-END; $$ LANGUAGE plpgsql;
+    raise notice 'HERE';
+    Return false --not sure if prevously return true before leave gets here and return false
+END;
+$$ LANGUAGE plpgsql;

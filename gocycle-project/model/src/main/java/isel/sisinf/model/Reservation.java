@@ -24,8 +24,7 @@ SOFTWARE.
 package isel.sisinf.model;
 
 import java.sql.Date;
-import java.util.Collection;
-
+import java.sql.Timestamp;
 import isel.sisinf.model.interfaces.IReservation;
 import jakarta.persistence.*;
 import org.eclipse.persistence.annotations.Direction;
@@ -44,8 +43,8 @@ import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParamet
 		parameters = {
 				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
 				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Date.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Date.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Timestamp.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Timestamp.class),
 				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
 				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
 				@StoredProcedureParameter(mode = ParameterMode.OUT, type = String.class)
@@ -66,6 +65,15 @@ import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParamet
 @NamedQuery(name="Reservation.getAll", query = "select r from Reservation r")
 @NamedQuery(name="Reservation.findByKey",
 		query="SELECT r FROM Reservation r WHERE r.noReservation =:key")
+@NamedStoredProcedureQuery(
+		name = "check_reservation_integrity",
+		procedureName = "check_reservation_integrity",
+		parameters = {
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Timestamp.class),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class),
+				@StoredProcedureParameter(mode = ParameterMode.OUT, type = Boolean.class)
+		})
 public class Reservation implements IReservation {
 
 	@Override
@@ -76,12 +84,12 @@ public class Reservation implements IReservation {
 	private long noReservation;
 	public Reservation() {}
 
-	public Reservation(int noReservation, Store store, Date initialDate, Date endDate, Integer value, Bike bike)
+	public Reservation(int noReservation, Store store, Timestamp initialDate, Timestamp endDate, Integer value, Bike bike)
 	{
 		this.noReservation = noReservation;
 		this.store = store;
-		this.startDate = new java.sql.Date(initialDate.getTime());
-		this.endDate = new java.sql.Date(endDate.getTime());
+		this.startDate = initialDate;
+		this.endDate = endDate;
 		this.value = value;
 		this.bike = bike;
 		//shop.getReserves().add(this);
@@ -97,9 +105,9 @@ public class Reservation implements IReservation {
 	@JoinColumn(name="store",referencedColumnName="code")
 	private Store store;
 
-	private Date startDate;
+	private Timestamp startDate;
 
-	private Date endDate;
+	private Timestamp endDate;
 
 	private float value;
 
@@ -108,21 +116,21 @@ public class Reservation implements IReservation {
 	private Client client;
 
 	@Override
-	public Date getStartDate() {
+	public Timestamp getStartDate() {
 		return startDate;
 	}
 
 	@Override
-	public void setStartDate(Date startDate) {
+	public void setStartDate(Timestamp startDate) {
 		this.startDate = startDate;
 	}
 
 	@Override
-	public Date getEndDate() {
+	public Timestamp getEndDate() {
 		return endDate;
 	}
 	@Override
-	public void setEndDate(Date endDate) {
+	public void setEndDate(Timestamp endDate) {
 		this.endDate = endDate;
 	}
 

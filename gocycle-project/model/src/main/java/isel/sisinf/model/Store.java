@@ -63,6 +63,8 @@ classes={
 
  */
 @Entity
+@NamedQuery(name = "Store.getAll",
+            query = "select s from Store s")
 @NamedQuery(name="Store.findByKey",
         query="SELECT s FROM Store s WHERE s.code =:key")
 public class Store implements IStore {

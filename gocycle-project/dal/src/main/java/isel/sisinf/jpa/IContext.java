@@ -26,13 +26,17 @@ package isel.sisinf.jpa;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Bike;
 import isel.sisinf.model.Reservation;
+import isel.sisinf.model.Store;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 
 // a) Why IContext needs to implement AutoCloseable
 public interface IContext extends AutoCloseable {
 
-	 enum IsolationLevel {READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE };
+
+
+	enum IsolationLevel {READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE };
 	 void beginTransaction();
 	 void beginTransaction(IsolationLevel isolationLevel);
 	 void commit();
@@ -41,8 +45,7 @@ public interface IContext extends AutoCloseable {
 	 void persist(Object entity);
 
 
-	 Reservation createReservation(Reservation reservation);
-	 Collection<Reservation> getAllReservations();
+
 
 	 Client createClient(Client client);
 
@@ -50,11 +53,21 @@ public interface IContext extends AutoCloseable {
 
 	Client getClient(Long clientId);
 
-
+	Bike updateBike(Bike bike);
 	Collection<Bike> getAllFreeBikes();
 
 	 Bike getBike(Long bikeId);
 	 Collection<Bike> getAllBikes();
+
+	Reservation createReservation(Reservation reservation);
+	Collection<Reservation> getAllReservations();
+	 Reservation getReservation(Long resId);
+	 Reservation deleteReservation(Reservation reservation);
+	 boolean checkReservationIntegrity(Integer client, Integer bike, Timestamp startDate);
+
+	 Collection<Store> getAllStores();
+
+	 Store getStore(Long noStore);
 	 /**
 	 ICountryRepository getCountries();//TODO
 	 IStudentRepository getStudents();

@@ -1,9 +1,6 @@
 package isel.sisinf.ui;
 
-import isel.sisinf.jpa.IBikeRepository;
-import isel.sisinf.jpa.IClientRepository;
-import isel.sisinf.jpa.IContext;
-import isel.sisinf.jpa.IReservationRepository;
+import isel.sisinf.jpa.*;
 
 /*
 MIT License
@@ -29,6 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +34,7 @@ import java.util.List;
 import isel.sisinf.model.Bike;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
+import isel.sisinf.model.Store;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 import jakarta.persistence.EntityManager;
@@ -45,30 +44,20 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
 import jakarta.persistence.StoredProcedureQuery;
 
-//o)Why this code here do not work?
-/*@NamedStoredProcedureQuery(
-	    name = "namedrand_fx",
-	    procedureName = "rand_fx",
-	    parameters = {
-	        @StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-	        @StoredProcedureParameter(mode = ParameterMode.OUT, type = Number.class)
-	    }
-	)
-*/
 public class JPAContext implements IContext{
 
 
     private EntityManagerFactory _emf;
     private EntityManager _em;
 
-    //Simple implementation for flat transaction support
     private EntityTransaction _tx;
-    //b) What is the purpose of _txCount?
     private int _txcount;
     private IReservationRepository _reservationRepository;
     private IBikeRepository _bikeRepository;
 
     private IClientRepository _clientRepository;
+
+    private IStoreRepository _storeRepository;
 
     /// HELPER METHODS
     protected List helperQueryImpl(String jpql, Object... params)
@@ -86,6 +75,7 @@ public class JPAContext implements IContext{
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
         System.out.println("helperCreateImpl: " + entity.toString());
 
+        beginTransaction();
         _em.persist(entity);
         _em.flush(); //To assure all changes in memory go into the database
         System.out.println("helperCreateImpl: " + entity.toString());
@@ -97,6 +87,9 @@ public class JPAContext implements IContext{
 
     protected Object helperUpdateImpl(Object entity)
     {
+        beginTransaction();
+        _em.merge(entity);
+        commit();
         beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
         _em.merge(entity); //d) What does merge do?
         _em.flush(); //To assure all changes in memory go into the database
@@ -106,7 +99,7 @@ public class JPAContext implements IContext{
 
     protected Object helperDeleteImpl(Object entity)
     {
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations.
+        beginTransaction();
         _em.remove(entity);
         //_em.flush(); //To assure all changes in memory go into the database
         _tx.commit();
@@ -183,7 +176,38 @@ public class JPAContext implements IContext{
             return resultList;
         }
     }
+    protected class StoreRepository implements IStoreRepository{
 
+        @Override
+        public Store create(Store entity) {
+            return (Store) helperCreateImpl(entity);
+        }
+
+        @Override
+        public Store update(Store entity) {
+            return (Store) helperUpdateImpl(entity);
+        }
+
+        @Override
+        public Store delete(Store entity) {
+            return (Store) helperDeleteImpl(entity);
+        }
+
+        @Override
+        public Store findByKey(Long key) {
+            return _em.createNamedQuery("Store.findByKey", Store.class).setParameter("key", key).getSingleResult();
+        }
+
+        @Override
+        public Collection<Store> find(String jpql, Object... params) {
+            return helperQueryImpl(jpql, params);
+        }
+
+        @Override
+        public Collection<Store> getAllStores(){
+            return _em.createNamedQuery("Store.getAll").getResultList();
+        }
+    }
     protected class ClientRepository implements IClientRepository {
         public Collection<Client> getAll() {
             Query query = _em.createNamedQuery("Client.getAll");
@@ -281,16 +305,11 @@ public class JPAContext implements IContext{
 
     }
 
-    @Override
-    public Collection<Reservation> getAllReservations() {
-        return _reservationRepository.getAll();
-    }
 
     @Override
-    public Reservation createReservation(Reservation reservation){
-        return _reservationRepository.create(reservation);
+    public Bike updateBike(Bike bike){
+        return _bikeRepository.update(bike);
     }
-
     @Override
     public Collection<Bike> getAllFreeBikes(){
         return _bikeRepository.getAllFreeBikes();
@@ -323,6 +342,49 @@ public class JPAContext implements IContext{
         return _clientRepository.findByKey(clientId);
     }
 
+    @Override
+    public Collection<Reservation> getAllReservations() {
+        return _reservationRepository.getAll();
+    }
+
+    @Override
+    public Reservation createReservation(Reservation reservation){
+        return _reservationRepository.create(reservation);
+    }
+
+    @Override
+    public Reservation getReservation(Long resId){
+        return _reservationRepository.findByKey(resId);
+    }
+
+    @Override
+    public Reservation deleteReservation(Reservation reservation){
+        return _reservationRepository.delete(reservation);
+    }
+
+    @Override
+    public Collection<Store> getAllStores(){
+        return _storeRepository.getAllStores();
+    }
+
+    @Override
+    public Store getStore(Long noStore) {
+        return _storeRepository.findByKey(noStore);
+    }
+
+
+    @Override
+    public boolean checkReservationIntegrity(Integer client, Integer bike, Timestamp startDate){
+        StoredProcedureQuery query = _em.createNamedStoredProcedureQuery("check_reservation_integrity");
+        query.setParameter(1, client);
+        query.setParameter(2, startDate);
+        query.setParameter(3, bike);
+
+        query.execute();
+        return (Boolean) query.getOutputParameterValue(4);
+
+    }
+
     public IClientRepository getClients() {
         return _clientRepository;
     }
@@ -340,6 +402,7 @@ public class JPAContext implements IContext{
         this._reservationRepository = new ReservationRepository();
         this._clientRepository = new ClientRepository();
         this._bikeRepository = new BikeRepository();
+        this._storeRepository = new StoreRepository();
     }
 
 

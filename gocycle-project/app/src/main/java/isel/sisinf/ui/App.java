@@ -23,13 +23,12 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.model.*;
 import isel.sisinf.model.Client;
-import isel.sisinf.model.Bike;
-import isel.sisinf.model.Client;
-import isel.sisinf.model.Reservation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Scanner;
@@ -183,18 +182,18 @@ class UI
         newClient.setAtrDisc(atrDisc);
         System.out.println(ctx.createClient(newClient));
         //ctx.createClient(newClient);
-
-
     }
   
     private void listExistingBikes()
     {
-        System.out.println("listExistingBikes()");
-        JPAContext ctx = new JPAContext();
-        Collection<Bike> allBikes = ctx.getAllBikes();
-        for(Bike b: allBikes){
-            System.out.println(b.toString());
-        }
+            System.out.println("listExistingBikes()");
+            JPAContext ctx = new JPAContext();
+            ctx.beginTransaction();
+            Collection<Bike> allBikes = ctx.getAllBikes();
+            ctx.commit();
+            for(Bike b: allBikes){
+                System.out.println(b.toString());
+            }
     }
 
     private void checkBikeAvailability()
@@ -220,32 +219,55 @@ class UI
     }
 
     private void obtainBookings() {
-        JPAContext ctx = new JPAContext();
-        ctx.beginTransaction();
-        Collection<Reservation> all = ctx.getAllReservations();
-        for(Reservation res: all){
-            System.out.println(res.toString());
-        }
-        System.out.println("obtainBookings()");
+            System.out.println("obtainBookings()");
+            JPAContext ctx = new JPAContext();
+            ctx.beginTransaction();
+            Collection<Reservation> all = ctx.getAllReservations();
+            ctx.commit();
+            for(Reservation res: all){
+                System.out.println(res.toString());
+            }
     }
 
     private void makeBooking()
     {
-        JPAContext ctx = new JPAContext();
-        ctx.beginTransaction();
-        Reservation r = new Reservation();
-        Long CustomerId = getCustomer(ctx);
-        Client c = ctx.getClient(CustomerId);
-        r.setClient(c);
-
-        Long BikeId = getFreeBike(ctx);
-        Bike b = ctx.getBike(BikeId);
-        r.setBike(b);
-
-        ctx.createReservation(r);
-        System.out.println("makeBooking()");
-
-
+        try {
+            System.out.println("makeBooking()");
+            JPAContext ctx = new JPAContext();
+            ctx.beginTransaction();
+            Reservation r = new Reservation();
+            //get a store
+            Integer noStore = getStore(ctx);
+            Store store = ctx.getStore(Long.parseLong(noStore.toString()));
+            r.setStore(store);
+            //get customer
+            Integer CustomerId = getCustomer(ctx);
+            Client c = ctx.getClient(Long.parseLong(CustomerId.toString()));
+            r.setClient(c);
+            //get bike
+            Integer BikeId = getFreeBike(ctx);
+            Bike b = ctx.getBike(Long.parseLong(BikeId.toString()));
+            r.setBike(b);
+            //get date
+            Timestamp date = getDateFromUser();
+            if(date == null){
+                System.out.println("Invalid date format. Reservation canceled.");
+                ctx.close();
+                return;
+            }
+            r.setStartDate(date);
+            //check Reservation Integrity
+            if(ctx.checkReservationIntegrity(CustomerId, BikeId, date)){
+                ctx.createReservation(r);
+            }
+            else {
+                System.out.println("Reservation Check Failed!!");
+                ctx.close();
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void cancelBooking()
@@ -253,6 +275,15 @@ class UI
 
         System.out.println("cancelBooking");
         
+            System.out.println("cancelBooking");
+            JPAContext ctx = new JPAContext();
+            ctx.beginTransaction();
+            //Get the Reservation
+            Reservation r = ctx.getReservation(getAReservation(ctx));
+            //Delete the reservation
+            ctx.deleteReservation(r);
+            ctx.commit();
+            System.out.println("Reservation with Number " + r.getNoReservation() + " was Cancelled!!");
     }
     private void about()
     {
@@ -262,21 +293,34 @@ class UI
         
     }
 
-    private Long getCustomer(JPAContext ctx){
+    private Integer getCustomer(JPAContext ctx){
         System.out.println("Choose a Customer ID for the Booking");
-        ctx.getAllClients();
+        Collection<Client> allClients = ctx.getAllClients();
+        for(Client c: allClients){
+            System.out.println(c.toString());
+        }
         Scanner s = new Scanner(System.in);
-        return s.nextLong();
+        return s.nextInt();
     }
 
-    private Long getFreeBike(JPAContext ctx){
+    private Integer getStore(JPAContext ctx){
+        System.out.println("Choose a Store for the booking");
+        Collection<Store> allStores = ctx.getAllStores();
+        for(Store s: allStores){
+            System.out.println(s.toString());
+        }
+        Scanner s = new Scanner(System.in);
+        return s.nextInt();
+    }
+
+    private Integer getFreeBike(JPAContext ctx){
         System.out.println("Choose a Bike ID for the Booking");
         Collection<Bike> allFreeBikes = ctx.getAllFreeBikes();
         for(Bike b: allFreeBikes){
             System.out.println(b.toString());
         }
         Scanner s = new Scanner(System.in);
-        return s.nextLong();
+        return s.nextInt();
     }
 
     private Long getBike(JPAContext context){
@@ -287,6 +331,32 @@ class UI
         }
         Scanner s = new Scanner(System.in);
         return s.nextLong();
+    }
+
+    private Long getAReservation(JPAContext context){
+        System.out.println("Choose a Reservation Id to Cancel:");
+        //Display the Existent Reservations
+        Collection<Reservation> allReservations = context.getAllReservations();
+        for (Reservation r : allReservations){
+            System.out.println(r.toString());
+        }
+        //Get the wanted reservation
+        Scanner s = new Scanner(System.in);
+        return s.nextLong();
+    }
+
+    private Timestamp getDateFromUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter reservation start date and time (format: dd/MM/yyyy HH:mm:ss):");
+        String dateString = scanner.nextLine();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            java.util.Date parsedDate = dateFormat.parse(dateString);
+            return new Timestamp(parsedDate.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 
