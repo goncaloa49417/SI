@@ -89,3 +89,25 @@ insert into electricBike values (4, 450, 30);
 
 insert into reservation (store, startDate, endDate, value,bike, client) values (1, now(), null, null,2 ,1);
 insert into reservation (store, startDate, endDate, value,bike, client) values(1, now(), null, null,3,3);
+
+CREATE OR REPLACE FUNCTION checkAvailability(bikeId INTEGER, checkTime TIMESTAMP)
+    RETURNS Boolean AS $$
+    DECLARE
+       r record;
+BEGIN
+raise notice 'before for';
+for r in SELECT *
+         FROM Reservation rer
+                  JOIN Bike b ON rer.bike = b.bikeId loop
+
+    	IF r.State = 'free' THEN
+            RETURN TRUE;
+        ELSIF checkTime <r.startDate or checkTime > r.endDate THEN
+            RETURN True;
+
+        ELSIF RETURN False;
+END IF;
+end loop;
+raise notice 'HERE';
+Return false --not sure if prevously return true before leave gets here and return false
+END; $$ LANGUAGE plpgsql;

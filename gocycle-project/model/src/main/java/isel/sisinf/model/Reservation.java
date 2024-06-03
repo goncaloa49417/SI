@@ -28,46 +28,16 @@ import java.util.Collection;
 
 import isel.sisinf.model.interfaces.IReservation;
 import jakarta.persistence.*;
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredFunctionQuery;
+import org.eclipse.persistence.platform.database.oracle.annotations.NamedPLSQLStoredFunctionQuery;
+import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParameter;
 
-/*
-@NamedQuery(name="Student.findByKey",
-			query="SELECT s FROM Student s WHERE s.studentNumber =:key")
-@NamedQuery(name="Student.EnrolledInCourse",
-	query="SELECT s FROM Student s join s.courses c WHERE c.courseId =:key")
-@NamedQuery(name="Student.CourseEnrolledInStudents",
-		query="SELECT s FROM Student s join s.courses c WHERE s.studentNumber =:key")
 
-@NamedStoredProcedureQuery(
-	    name = "namedrand_fx", 
-	    procedureName = "rand_fx", 
-	    parameters = { 
-	        @StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class), 
-	        @StoredProcedureParameter(mode = ParameterMode.OUT, type = Number.class)
-	    }
-)
-@NamedStoredProcedureQuery(
-	    name = "altnamedfromCountry", 
-	    procedureName = "fromCountry", 
-	    		resultSetMappings = {"namedfromCountryResult"},
-	    parameters = { 
-	        @StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class)//, 
-	        //@StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, type = void.class)
-	    }
-	)
-@SqlResultSetMapping(name="namedfromCountryResult",
-classes={
-    @ConstructorResult(targetClass=Student.class,
-        columns={
-            @ColumnResult(name="studentNumber"),
-            @ColumnResult(name="name"),
-            @ColumnResult(name="dateBirth"),
-            @ColumnResult(name="sex", type=Character.class),
-            @ColumnResult(name="country")})
-})
 
- */
 
 @Entity
+/*
 @NamedStoredProcedureQuery(
 		name = "name_makeReservation",
 		procedureName = "makeReservation",
@@ -81,6 +51,18 @@ classes={
 				@StoredProcedureParameter(mode = ParameterMode.OUT, type = String.class)
 		}
 )
+
+ */
+
+@NamedStoredProcedureQuery(
+		name = "Name_checkAvailability",
+		procedureName = "checkAvailability",
+		parameters = {
+				@StoredProcedureParameter(type = Integer.class, mode = ParameterMode.IN),
+				@StoredProcedureParameter(type = Date.class, mode = ParameterMode.IN)
+		}
+)
+
 @NamedQuery(name="Reservation.getAll", query = "select r from Reservation r")
 @NamedQuery(name="Reservation.findByKey",
 		query="SELECT r FROM Reservation r WHERE r.noReservation =:key")

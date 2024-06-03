@@ -30,6 +30,7 @@ SOFTWARE.
 */
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import isel.sisinf.model.Bike;
@@ -354,14 +355,21 @@ public class JPAContext implements IContext{
 
 
 
-    public java.math.BigDecimal rand_fx(int seed) {
+    public Boolean checkAvailability(int bikeId, Date checkTime) {
 
-        StoredProcedureQuery namedrand_fx =
-                _em.createNamedStoredProcedureQuery("name_makeReservation");
-        namedrand_fx.setParameter(1, seed);
-        namedrand_fx.execute();
+        StoredProcedureQuery name_makeReservation =
+                _em.createNamedStoredProcedureQuery("Name_checkAvailability");
+        name_makeReservation.setParameter(1, bikeId);
+        name_makeReservation.setParameter(2, checkTime);
+//2024-02-20 17:35
+        name_makeReservation.execute();
+        Object returnType=name_makeReservation.getSingleResult();
+        Boolean availability = null;
+        for (Object o : (Object[]) returnType) {
+            availability = (Boolean) o;
+        }
 
-        return (java.math.BigDecimal)namedrand_fx.getOutputParameterValue(2);
+        return availability;
     }
 
 }

@@ -28,7 +28,10 @@ import isel.sisinf.model.Bike;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.HashMap;
 
@@ -197,8 +200,22 @@ class UI
     private void checkBikeAvailability()
     {
         JPAContext ctx = new JPAContext();
-        Long bikeId = getBike(ctx);
-        System.out.println("checkBikeAvailability()");
+        Scanner s = new Scanner(System.in);
+        System.out.println("enter de Id of the bike you want to check the availability of:");
+        String bikeId =  s.nextLine();
+        Integer bikeIdInt = Integer.parseInt(bikeId);
+        System.out.println("Enter the date you want to check the availability of the bike in the format yyyy-MM-dd HH:mm:");
+        String date = s.nextLine();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date dateDate = null;
+        try {
+            dateDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            System.out.println("The entered date is not in the correct format. Please use yyyy-MM-dd HH:mm.");
+            return;
+        }
+
+        System.out.println(ctx.checkAvailability(bikeIdInt, dateDate));
 
     }
 
