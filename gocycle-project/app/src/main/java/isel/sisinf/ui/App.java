@@ -273,15 +273,18 @@ class UI
     private void cancelBooking()
     {
 
-        System.out.println("cancelBooking");
-        
-            System.out.println("cancelBooking");
             JPAContext ctx = new JPAContext();
             ctx.beginTransaction();
             //Get the Reservation
             Reservation r = ctx.getReservation(getAReservation(ctx));
+            ctx.lock(r);
             //Delete the reservation
+        try {
             ctx.deleteReservation(r);
+        }catch (Exception e){
+            System.out.println("cannot cancel the reservation");
+            return;
+        }
             ctx.commit();
             System.out.println("Reservation with Number " + r.getNoReservation() + " was Cancelled!!");
     }

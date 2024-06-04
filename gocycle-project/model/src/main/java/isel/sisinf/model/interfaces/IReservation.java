@@ -57,4 +57,8 @@ public interface IReservation {
     public Bike getBike();
 
     public void setBike(Bike bike);
+
+    public int getVersion();
+
+    public void setVersion(int version);
 }

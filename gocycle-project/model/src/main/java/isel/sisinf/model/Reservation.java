@@ -36,23 +36,6 @@ import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParamet
 
 
 @Entity
-/*
-@NamedStoredProcedureQuery(
-		name = "name_makeReservation",
-		procedureName = "makeReservation",
-		parameters = {
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Timestamp.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Timestamp.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class),
-				@StoredProcedureParameter(mode = ParameterMode.OUT, type = String.class)
-		}
-)
-
- */
-
 @NamedStoredProcedureQuery(
 		name = "Name_checkAvailability",
 		procedureName = "checkAvailability",
@@ -82,9 +65,12 @@ public class Reservation implements IReservation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long noReservation;
+
+	@Version
+	private int version;
 	public Reservation() {}
 
-	public Reservation(int noReservation, Store store, Timestamp initialDate, Timestamp endDate, Integer value, Bike bike)
+	public Reservation(int noReservation, Store store, Timestamp initialDate, Timestamp endDate, Integer value, Bike bike, int version)
 	{
 		this.noReservation = noReservation;
 		this.store = store;
@@ -92,6 +78,7 @@ public class Reservation implements IReservation {
 		this.endDate = endDate;
 		this.value = value;
 		this.bike = bike;
+		this.version = version;
 		//shop.getReserves().add(this);
 	}
 
@@ -173,4 +160,14 @@ public class Reservation implements IReservation {
 
 	@Override
 	public void setBike(Bike bike){this.bike = bike;}
+
+	@Override
+	public int getVersion() {
+		return version;
+	}
+
+	@Override
+	public void setVersion(int version) {
+		this.version = version;
+	}
 }

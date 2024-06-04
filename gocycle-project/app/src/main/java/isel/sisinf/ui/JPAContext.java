@@ -35,14 +35,9 @@ import isel.sisinf.model.Bike;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
 import isel.sisinf.model.Store;
+import jakarta.persistence.*;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.Query;
-import jakarta.persistence.StoredProcedureQuery;
 
 public class JPAContext implements IContext{
 
@@ -253,6 +248,10 @@ public class JPAContext implements IContext{
             _txcount=0;
         }
         ++_txcount;
+    }
+    @Override
+    public void lock(Object entity) {
+        _em.lock(entity, LockModeType.OPTIMISTIC);
     }
 
     @Override

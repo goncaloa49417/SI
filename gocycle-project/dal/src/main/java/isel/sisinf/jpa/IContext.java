@@ -43,6 +43,7 @@ public interface IContext extends AutoCloseable {
 	 void flush();
 	 void clear();
 	 void persist(Object entity);
+	 void lock(Object entity);
 
 
 

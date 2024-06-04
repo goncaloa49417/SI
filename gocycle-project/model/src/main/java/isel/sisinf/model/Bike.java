@@ -13,29 +13,7 @@ import org.eclipse.persistence.platform.database.oracle.annotations.NamedPLSQLSt
 import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParameter;
 
 @Entity
-/*
-@NamedStoredFunctionQuery(
-        name = "Bike.checkAvailability",
-        functionName = "CHECK_BIKE_AVAILABILITY",
-        returnParameter = @PLSQLParameter(direction = Direction.OUT,databaseType = "BOOLEAN")
-        parameters = {
-                @PLSQLParameter(direction = Direction.IN, type = Long.class),
-                @PLSQLParameter(direction = Direction.IN, type = Date.class)
-        }
-)
-
-
-@NamedPLSQLStoredFunctionQuery(
-        name = "Bike.checkAvailability",
-        functionName = "CHECK_BIKE_AVAILABILITY",
-        returnParameter = @PLSQLParameter(queryParameter = "result", direction = Direction.OUT, type = Boolean.class),
-        parameters = {
-                @StoredProcedureParameter(type = null,),
-                @StoredProcedureParameter(name = "checkTime", mode =ParameterMode.IN, type = Date.class)
-        }
-)
-*/
-
+//TODO(ver se é necessário fazer join com a table eletricBike)
 @NamedQuery(name = "Bike.getAll", query = "select b from Bike b")
 @NamedQuery(name="Bike.getAllFreeBikes", query = "select b from Bike b where b.state = 'free'")
 @NamedQuery(name="Bike.findByKey",

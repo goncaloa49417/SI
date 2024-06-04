@@ -47,7 +47,6 @@ create table bike(
                      constraint check_bike_type check(atrDisc in ('E', 'C')),
                      constraint check_shifts check(shift in (1, 6, 18, 24))
 );
-
 create table electricBike(
                              bike int unique not null references bike(bikeId),
                              autonomy int not null,
@@ -63,6 +62,7 @@ create table reservation(
                             bike int not null references bike(bikeId),
                             client int not null references Client(clientId),
                             value numeric(4,2)
+                            version int not null
 );
 
 
@@ -87,8 +87,8 @@ insert into bike(weight, model, brand, state, atrdisc, shift, device) values(45.
 insert into electricBike values (2, 500, 33);
 insert into electricBike values (4, 450, 30);
 
-insert into reservation (store, startDate, endDate, value,bike, client) values (1, now(), null, null,2 ,1);
-insert into reservation (store, startDate, endDate, value,bike, client) values(1, now(), null, null,3,3);
+insert into reservation (store, startDate, endDate, value,bike, client,version) values (1, now(), null, null,2 ,1,1);
+insert into reservation (store, startDate, endDate, value,bike, client, version) values(1, now(), null, null,3,3,1);
 
 CREATE OR REPLACE FUNCTION check_reservation_integrity(
     IN customer_id INTEGER,
@@ -158,3 +158,40 @@ end loop;
     Return false --not sure if prevously return true before leave gets here and return false
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_insertBike() RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT atrDisc FROM bike WHERE bikeId = NEW.bike) != 'E' THEN
+        RAISE EXCEPTION 'The bike with id % is not an electric bike', NEW.bike;
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER check_if_bikeEletric
+    BEFORE INSERT ON electricBike
+    FOR EACH ROW
+    EXECUTE FUNCTION check_insertBike();
+
+
+CREATE OR REPLACE FUNCTION checkStartDate() RETURNS TRIGGER AS $$
+	declare
+r record;
+BEGIN
+
+for r in select startDate from reservation loop
+    if  r.startDate=new.startDate then
+	raise exception 'the bike is already reserved for that date';
+end if;
+end loop;
+return new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER check_start_date
+    BEFORE INSERT ON reservation
+    FOR EACH ROW
+    EXECUTE FUNCTION checkStartDate();
+
+       --test before the version
+--insert into reservation (store, startDate, endDate, value,bike, client) values (1,'2024-05-30 23:49:39.45903', null, null,4 ,1);
