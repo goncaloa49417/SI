@@ -61,7 +61,7 @@ create table reservation(
                             endDate timestamp,
                             bike int not null references bike(bikeId),
                             client int not null references Client(clientId),
-                            value numeric(4,2)
+                            value numeric(4,2),
                             version int not null
 );
 
@@ -151,26 +151,23 @@ EXECUTE FUNCTION checkBikeReservationAvailability();
 
 CREATE OR REPLACE FUNCTION checkAvailability(bikeId INTEGER, checkTime TIMESTAMP)
     RETURNS Boolean AS $$
-    DECLARE
-       r record;
+DECLARE
+    r record;
 BEGIN
-raise notice 'before for';
-for r in SELECT *
-         FROM Reservation rer
-                  JOIN Bike b ON rer.bike = b.bikeId loop
-
-    	IF r.State = 'free' THEN
-            RETURN TRUE;
-        ELSIF checkTime <r.startDate or checkTime > r.endDate THEN
-            RETURN True;
-
-        ELSIF RETURN False;
-        END IF;
-end loop;
-    raise notice 'HERE';
-    Return false --not sure if prevously return true before leave gets here and return false
+    raise notice 'before for';
+    for r in SELECT *
+             FROM Reservation rer
+                      JOIN Bike b ON rer.bike = b.bikeId loop
+            IF r.state = 'free' THEN
+                RETURN TRUE;
+            ELSIF checkTime < r.startDate or checkTime > r.endDate THEN
+                RETURN True;
+            END IF;
+        end loop;
+    Return false;
 END;
-$$ LANGUAGE plpgsql;
+$$
+    Language plpgsql;
 
 CREATE OR REPLACE FUNCTION check_insertBike() RETURNS TRIGGER AS $$
 BEGIN

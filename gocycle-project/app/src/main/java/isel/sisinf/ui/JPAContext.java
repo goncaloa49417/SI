@@ -1,36 +1,10 @@
 package isel.sisinf.ui;
 
 import isel.sisinf.jpa.*;
-
-/*
-MIT License
-
-Copyright (c) 2022-2024, Nuno Datia, ISEL
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import isel.sisinf.model.Bike;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Reservation;
@@ -67,15 +41,14 @@ public class JPAContext implements IContext{
 
     protected Object helperCreateImpl(Object entity)
     {
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
+        beginTransaction();
         System.out.println("helperCreateImpl: " + entity.toString());
 
         beginTransaction();
         _em.persist(entity);
-        _em.flush(); //To assure all changes in memory go into the database
+        _em.flush();
         System.out.println("helperCreateImpl: " + entity.toString());
         _tx.commit();
-        //commit(); //c) Why can we commit a transaction here, if other commands can be sent to the database?
 
         return entity;
     }
@@ -85,9 +58,9 @@ public class JPAContext implements IContext{
         beginTransaction();
         _em.merge(entity);
         commit();
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
-        _em.merge(entity); //d) What does merge do?
-        _em.flush(); //To assure all changes in memory go into the database
+        beginTransaction();
+        _em.merge(entity);
+        _em.flush();
         _tx.commit();
         return entity;
     }
@@ -96,7 +69,6 @@ public class JPAContext implements IContext{
     {
         beginTransaction();
         _em.remove(entity);
-        //_em.flush(); //To assure all changes in memory go into the database
         _tx.commit();
         return entity;
     }
@@ -279,7 +251,7 @@ public class JPAContext implements IContext{
         --_txcount;
         if(_txcount==0 && _tx != null)
         {
-            _em.flush(); //To assure all changes in memory go into the database
+            _em.flush();
             System.out.println("Commiting transaction");
             _tx.commit();
             _tx = null;
@@ -408,7 +380,6 @@ public class JPAContext implements IContext{
 
     @Override
     public void close() throws Exception {
-
         if(_tx != null)
             _tx.rollback();
         _em.close();
@@ -423,7 +394,6 @@ public class JPAContext implements IContext{
                 _em.createNamedStoredProcedureQuery("Name_checkAvailability");
         name_makeReservation.setParameter(1, bikeId);
         name_makeReservation.setParameter(2, checkTime);
-//2024-02-20 17:35
         name_makeReservation.execute();
         Object returnType=name_makeReservation.getSingleResult();
         Boolean availability = null;
@@ -433,5 +403,4 @@ public class JPAContext implements IContext{
 
         return availability;
     }
-
 }
