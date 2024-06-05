@@ -27,10 +27,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import isel.sisinf.model.interfaces.IReservation;
 import jakarta.persistence.*;
-import org.eclipse.persistence.annotations.Direction;
-import org.eclipse.persistence.annotations.NamedStoredFunctionQuery;
-import org.eclipse.persistence.platform.database.oracle.annotations.NamedPLSQLStoredFunctionQuery;
-import org.eclipse.persistence.platform.database.oracle.annotations.PLSQLParameter;
 
 
 
@@ -61,7 +57,8 @@ public class Reservation implements IReservation {
 
 	@Override
 	public String toString(){return "Reservation = [noReservation=" + noReservation + ", store="+ store.getCode() +
-			", startDate=" + startDate + ", endDate=" + endDate + ", value=" + value + ", bike=" + bike.getBikeId() + "]";}
+			", startDate=" + startDate + ", endDate=" + endDate + ", value=" + value + ", bike=" + bike.getBikeId() +
+			", version=" + version + "]";}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long noReservation;
@@ -79,7 +76,6 @@ public class Reservation implements IReservation {
 		this.value = value;
 		this.bike = bike;
 		this.version = version;
-		//shop.getReserves().add(this);
 	}
 
 	

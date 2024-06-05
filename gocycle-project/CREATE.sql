@@ -87,7 +87,7 @@ insert into bike(weight, model, brand, state, atrdisc, shift, device) values(45.
 insert into electricBike values (2, 500, 33);
 insert into electricBike values (4, 450, 30);
 
-insert into reservation (store, startDate, endDate, value,bike, client,version) values (1, now(), null, null,2 ,1,1);
+insert into reservation (store, startDate, endDate, value,bike, client, version) values (1, now(), null, null,2 ,1,1);
 insert into reservation (store, startDate, endDate, value,bike, client, version) values(1, now(), null, null,3,3,1);
 
 CREATE OR REPLACE FUNCTION check_reservation_integrity(
@@ -97,9 +97,6 @@ CREATE OR REPLACE FUNCTION check_reservation_integrity(
     OUT is_doable BOOLEAN
 )
 AS $$
-DECLARE
-    total_bikes INT;
-    reserved_bikes INT;
 BEGIN
     -- Check if the client has a reservation at this start date
     IF EXISTS (
@@ -122,18 +119,34 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Check if there are less than 10% available bikes
-    SELECT COUNT(*) INTO total_bikes FROM bike;
-    SELECT COUNT(*) INTO reserved_bikes FROM reservation r WHERE start_date BETWEEN r.startDate AND r.endDate;
-
-    IF total_bikes - reserved_bikes < (total_bikes * 0.1) THEN
-        is_doable := false;
-    ELSE
-        is_doable := true;
-    END IF;
+    is_doable := TRUE;
+    RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
+
+CREATE OR replace FUNCTION checkBikeReservationAvailability() RETURNS TRIGGER AS $$
+DECLARE
+    total_bikes Integer;
+    reserved_bikes Integer;
+BEGIN
+    --Get total bikes
+    select Count(*) into total_bikes from bike;
+
+    --Get the number of reserved bikes at the wanted time
+    select Count(*) into reserved_bikes from reservation r where new.startDate between r.startDate and r.endDate;
+
+    if reserved_bikes < (total_bikes * 0.1) then
+        raise exception 'Total reserved bikes are less than 10%%';
+    end if;
+    return new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR replace TRIGGER check_bike_reservation_availability
+    BEFORE INSERT ON reservation
+    FOR EACH ROW
+EXECUTE FUNCTION checkBikeReservationAvailability();
 
 
 CREATE OR REPLACE FUNCTION checkAvailability(bikeId INTEGER, checkTime TIMESTAMP)
@@ -192,6 +205,8 @@ CREATE OR REPLACE TRIGGER check_start_date
     BEFORE INSERT ON reservation
     FOR EACH ROW
     EXECUTE FUNCTION checkStartDate();
+
+
 
        --test before the version
 --insert into reservation (store, startDate, endDate, value,bike, client) values (1,'2024-05-30 23:49:39.45903', null, null,4 ,1);
