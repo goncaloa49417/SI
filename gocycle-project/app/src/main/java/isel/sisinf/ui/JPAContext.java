@@ -353,7 +353,6 @@ public class JPAContext implements IContext{
 
         query.execute();
         return (Boolean) query.getOutputParameterValue(4);
-
     }
 
     public IClientRepository getClients() {

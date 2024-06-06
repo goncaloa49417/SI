@@ -14,11 +14,10 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
-
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:9080/postgres"/>
-            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="ruben"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://sisinfvlab1.dyn.fil.isel.pt:5432/postgres"/>
+            <property name="jakarta.persistence.jdbc.user" value="t42dg27"/>
+            <property name="jakarta.persistence.jdbc.password" value="grupo27"/>
 
 
 			<property name="eclipselink.logging.level" value="INFO"/>
