@@ -345,7 +345,7 @@ public class JPAContext implements IContext{
 
 
     @Override
-    public boolean checkReservationIntegrity(Integer client, Integer bike, Timestamp startDate){
+    public boolean checkReservationIntegrity(Integer client,Integer bike ,Timestamp startDate){
         StoredProcedureQuery query = _em.createNamedStoredProcedureQuery("check_reservation_integrity");
         query.setParameter(1, client);
         query.setParameter(2, startDate);

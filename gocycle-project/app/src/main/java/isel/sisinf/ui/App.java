@@ -257,7 +257,7 @@ class UI
             }
             r.setStartDate(date);
             //check Reservation Integrity
-            if(ctx.checkReservationIntegrity(CustomerId, BikeId, date)){
+            if(ctx.checkReservationIntegrity(CustomerId,BikeId ,date)){
                 ctx.createReservation(r);
             }
             else {

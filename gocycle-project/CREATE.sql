@@ -3,13 +3,14 @@ drop table if exists public.Store CASCADE;
 drop table if exists public.Device CASCADE;
 drop table if exists public.Reservation CASCADE;
 drop table if exists public.ElectricBike CASCADE;
+drop table if exists public.Bike CASCADE;
 
 create table Client(
                        clientId serial primary key,
                        name varchar(20) not null,
                        address varchar(100) not null,
                        email varchar(50) unique not null,
-                       phone varchar(15) unique not null,
+                       phone varchar(9) unique not null,
                        noIdent varchar(20) unique not null,
                        nationality varchar(15) not null,
                        atrDisc varchar(2) not null,
@@ -67,7 +68,7 @@ create table reservation(
 
 
 insert into client (name, address , email , phone, noIdent, nationality, atrdisc) values ('alice', 'chelas', 'alice@hotmail.com', '123456789', '234253255','Portuguese' ,'C');
-insert into client (name, address , email , phone, noIdent, nationality, atrdisc) values ('desmond', 'porto', 'desmond@hotmail.com', '3270523750', '252379032', 'English', 'G');
+insert into client (name, address , email , phone, noIdent, nationality, atrdisc) values ('desmond', 'porto', 'desmond@hotmail.com', '32705230', '252379032', 'English', 'G');
 insert into client (name, address , email , phone, noIdent, nationality, atrdisc) values ('bob', 'sintra', 'bob@hotmail.com', '987654321', '983329805', 'Chinese', 'C');
 insert into client (name, address , email , phone, noIdent, nationality, atrdisc) values ('richard', 'olivais', 'richard@hotmail.com', '358253523', '235235235', 'Portuguese', 'C');
 
@@ -87,13 +88,14 @@ insert into bike(weight, model, brand, state, atrdisc, shift, device) values(45.
 insert into electricBike values (2, 500, 33);
 insert into electricBike values (4, 450, 30);
 
-insert into reservation (store, startDate, endDate, value,bike, client, version) values (1, now(), null, null,2 ,1,1);
-insert into reservation (store, startDate, endDate, value,bike, client, version) values(1, now(), null, null,3,3,1);
+INSERT INTO reservation (store, startDate, endDate, value, bike, client, version)
+VALUES (1, '2024-06-06 10:00:00', '2024-06-13 18:00:00', 40.50, 2, 1, 1);
+insert into reservation (store, startDate, endDate, value,bike, client, version) values(1, '2024-07-07 10:00:00', '2024-07-13 18:00:00', 40.50,3,3,1);
 
 CREATE OR REPLACE FUNCTION check_reservation_integrity(
     IN customer_id INTEGER,
-    IN start_date TIMESTAMP,
-    IN bike_id INTEGER,
+    IN start_date timestamp,
+    IN bike_id Integer,
     OUT is_doable BOOLEAN
 )
 AS $$
@@ -101,19 +103,6 @@ BEGIN
     -- Check if the client has a reservation at this start date
     IF EXISTS (
         SELECT 1 FROM reservation r WHERE r.client = customer_id AND r.startDate = start_date
-    ) THEN
-        is_doable := false;
-        RETURN;
-    END IF;
-
-    -- Check if the requested bike is reserved for this time
-    IF EXISTS (
-        SELECT 1 FROM reservation r
-        WHERE r.bike = bike_id
-          AND (
-            (start_date BETWEEN r.startDate AND r.endDate)
-                OR (r.endDate IS NULL AND start_date >= r.startDate)
-            )
     ) THEN
         is_doable := false;
         RETURN;
@@ -173,37 +162,37 @@ CREATE OR REPLACE FUNCTION check_insertBike() RETURNS TRIGGER AS $$
 BEGIN
     IF (SELECT atrDisc FROM bike WHERE bikeId = NEW.bike) != 'E' THEN
         RAISE EXCEPTION 'The bike with id % is not an electric bike', NEW.bike;
-END IF;
-RETURN NEW;
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER check_if_bikeEletric
     BEFORE INSERT ON electricBike
     FOR EACH ROW
-    EXECUTE FUNCTION check_insertBike();
+EXECUTE FUNCTION check_insertBike();
 
 
 CREATE OR REPLACE FUNCTION checkStartDate() RETURNS TRIGGER AS $$
-	declare
-r record;
+declare
+    r record;
 BEGIN
 
-for r in select startDate from reservation loop
-    if  r.startDate=new.startDate then
-	raise exception 'the bike is already reserved for that date';
-end if;
-end loop;
-return new;
+    for r in select * from reservation loop
+            if (new.bike = r.bike) and ((new.startDate between r.startDate and r.endDate) OR (r.startDate is null and new.startDate >= r.startDate)) then
+                raise exception 'the bike is already reserved for that date';
+            end if;
+        end loop;
+    return new;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER check_start_date
     BEFORE INSERT ON reservation
     FOR EACH ROW
-    EXECUTE FUNCTION checkStartDate();
+EXECUTE FUNCTION checkStartDate();
 
 
-
-       --test before the version
+--test before the version
 --insert into reservation (store, startDate, endDate, value,bike, client) values (1,'2024-05-30 23:49:39.45903', null, null,4 ,1);
+

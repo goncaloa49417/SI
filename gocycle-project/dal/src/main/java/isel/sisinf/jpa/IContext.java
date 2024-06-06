@@ -64,7 +64,7 @@ public interface IContext extends AutoCloseable {
 	Collection<Reservation> getAllReservations();
 	 Reservation getReservation(Long resId);
 	 Reservation deleteReservation(Reservation reservation);
-	 boolean checkReservationIntegrity(Integer client, Integer bike, Timestamp startDate);
+	 boolean checkReservationIntegrity(Integer client, Integer Bike,Timestamp startDate);
 
 	 Collection<Store> getAllStores();
 
